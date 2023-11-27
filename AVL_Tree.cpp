@@ -67,48 +67,116 @@ public:
         return rightChild;
     }
 
-    Node* insert(Node* targetNode, Node* newNode){
-        if(targetNode == NULL){
-            targetNode = newNode;
+    Node* insert(Node* currentNode, Node* newNode){
+        if(currentNode == NULL){
+            currentNode = newNode;
             cout << "insertComplete!" << endl;
-            return targetNode;
+            return currentNode;
         }
 
-        if(newNode->value < targetNode->value){
-            targetNode->left = insert(targetNode->left, newNode);
+        if(newNode->value < currentNode->value){
+            currentNode->left = insert(currentNode->left, newNode);
         }
-        else if(newNode->value > targetNode->value){
-            targetNode->right = insert(targetNode->right, newNode);
+        else if(newNode->value > currentNode->value){
+            currentNode->right = insert(currentNode->right, newNode);
         }
         else{
             cout << "insertError!" << endl;
-            return targetNode;
+            return currentNode;
         }
 
-        int bf = getBalanceFactor(targetNode);
+        int bf = getBalanceFactor(currentNode);
         // LL Case
-        if(bf > 1 && newNode->value < targetNode->left->value){
-            return rightRotate(targetNode);
+        if(bf > 1 && newNode->value < currentNode->left->value){
+            return rightRotate(currentNode);
         }
 
         //RR Case
-        if(bf < -1 && newNode->value > targetNode->right->value){
-            return leftRotate(targetNode);
+        if(bf < -1 && newNode->value > currentNode->right->value){
+            return leftRotate(currentNode);
         }
 
         //LR Case
-        if(bf > 1 && newNode->value > targetNode->left->value){
-            targetNode->left = leftRotate(targetNode->left);
-            return rightRotate(targetNode);
+        if(bf > 1 && newNode->value > currentNode->left->value){
+            currentNode->left = leftRotate(currentNode->left);
+            return rightRotate(currentNode);
         }
 
         //RL Case
-        if(bf < -1 && newNode->value < targetNode->right->value){
-            targetNode->right = rightRotate(targetNode->right);
-            return leftRotate(targetNode);
+        if(bf < -1 && newNode->value < currentNode->right->value){
+            currentNode->right = rightRotate(currentNode->right);
+            return leftRotate(currentNode);
         }
 
-        return targetNode;
+        return currentNode;
+    }
+
+    Node* minValueNode(Node* node){
+        Node* current = node;
+
+        while(current->left != NULL){
+            current = current->left;
+        }
+        return current;
+    }
+
+    Node* deleteNode(Node* currentNode, int val){
+        if(currentNode == NULL){
+            return NULL;
+        }
+
+        else if(val < currentNode->value){
+            currentNode->left = deleteNode(currentNode->left, val);
+        }
+
+        else if(val > currentNode->value){
+            currentNode->right = deleteNode(currentNode->right, val);
+        }
+
+        else{
+            //node with only one child or no child
+            if(currentNode->left == NULL){
+                Node* tempNode = currentNode->right;
+                delete currentNode;
+                return tempNode;
+            }
+            else if(currentNode->right == NULL){
+                Node* tempNode = currentNode->left;
+                delete currentNode;
+                return tempNode;
+            }
+            else{
+                //node with two children: Get the inorder successor (smallest in the right subtree)
+                Node* tempNode = minValueNode(currentNode->right);
+                //copy the inorder successor's content to this node
+                currentNode->value = tempNode->value;
+                //delete the inorder successor
+                currentNode->right = deleteNode(currentNode->right, tempNode->value);
+            }
+        }
+
+        int bf = getBalanceFactor(currentNode);
+
+        //LL Case
+        if(bf == 2 && getBalanceFactor(currentNode->left) >= 0){
+            return rightRotate(currentNode);
+        }
+        //RR Case
+        else if(bf == -2 && getBalanceFactor(currentNode->right) <= 0){
+            return leftRotate(currentNode);
+        }
+        //LR Case
+        else if(bf == 2 && getBalanceFactor(currentNode->left) == -1){
+            currentNode->left = leftRotate(currentNode->left);
+            return rightRotate(currentNode);
+        }
+        //RL Case
+        else if(bf == -2 && getBalanceFactor(currentNode->right) == 1){
+            currentNode->right = rightRotate(currentNode->right);
+            return leftRotate(currentNode);
+        }
+
+        return currentNode;
     }
 
     void print2D(Node* node, int space){
@@ -135,7 +203,9 @@ int main(){
         obj.root = obj.insert(obj.root, newNode);
         cout << endl;
         obj.print2D(obj.root, 5);
+        cout << "\n______________________________\n";
     }
-
+    obj.deleteNode(obj.root, 32);
+    obj.print2D(obj.root, 5);
     return 0;
 }
