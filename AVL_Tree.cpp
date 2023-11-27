@@ -4,34 +4,25 @@
 using namespace std;
 
 class Node {
-    public:
+    friend class AVLTree;
+public:
     int value;
     Node *left;
     Node *right;
 
-    Node(){
-        value = 0;
-        left = NULL;
-        right = NULL;
-    }
+    Node(): value(0), left(NULL), right(NULL){};
 
-    Node(int v){
-        value = v;
-        left = NULL;
-        right = NULL;
-    }
+    Node(int v): value(v), left(NULL), right(NULL){};
 };
 
 class AVLTree{
-    Node *root;
-    
-    AVLTree(){
-        root = NULL;
-    }
+public: 
+    Node* root;
+    AVLTree():root(NULL){};
 
     bool isTreeEmpty(){
         if(root == NULL){
-            return true;
+            return true; 
         }
         return false;
     }
@@ -117,4 +108,31 @@ class AVLTree{
         }
     }
 
+    void print2D(Node *node, int space){
+        if(node == NULL){
+            return;
+        }
+
+        space += 5;
+        print2D(node->right, space);
+        cout << endl;
+        for(int i = 5; i < space; i++){
+            cout << " ";
+        }
+        cout << node->value << "\n";
+        print2D(node->left, space);
+    }
 };
+
+int main(){
+    AVLTree obj;
+    int testCase[6] = {55, 32, 22, 40, 27, 18};
+    for(int i = 0; i < 6; i++){
+        Node *newNode = new Node(testCase[i]);
+        obj.root = obj.insert(obj.root, newNode);
+        cout << endl;
+        obj.print2D(obj.root, 5);
+    }
+
+    return 0;
+}
