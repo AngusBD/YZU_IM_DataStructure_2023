@@ -7,8 +7,8 @@ class Node {
     friend class AVLTree;
 public:
     int value;
-    Node *left;
-    Node *right;
+    Node* left;
+    Node* right;
 
     Node(): value(0), left(NULL), right(NULL){};
 
@@ -82,6 +82,7 @@ public:
         }
         else{
             cout << "insertError!" << endl;
+            return targetNode;
         }
 
         int bf = getBalanceFactor(targetNode);
@@ -106,17 +107,19 @@ public:
             targetNode->right = rightRotate(targetNode->right);
             return leftRotate(targetNode);
         }
+
+        return targetNode;
     }
 
-    void print2D(Node *node, int space){
+    void print2D(Node* node, int space){
         if(node == NULL){
             return;
         }
 
-        space += 5;
+        space += 10;
         print2D(node->right, space);
         cout << endl;
-        for(int i = 5; i < space; i++){
+        for(int i = 10; i < space; i++){
             cout << " ";
         }
         cout << node->value << "\n";
@@ -128,7 +131,7 @@ int main(){
     AVLTree obj;
     int testCase[6] = {55, 32, 22, 40, 27, 18};
     for(int i = 0; i < 6; i++){
-        Node *newNode = new Node(testCase[i]);
+        Node* newNode = new Node(testCase[i]);
         obj.root = obj.insert(obj.root, newNode);
         cout << endl;
         obj.print2D(obj.root, 5);
