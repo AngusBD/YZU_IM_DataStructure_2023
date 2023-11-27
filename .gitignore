@@ -1,3 +1,4 @@
 
-AVL_Tree.exe
-.vscode/tasks.json
+*.exe
+.vscode/
+AVL_Tree_example.cpp
